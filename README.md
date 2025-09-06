@@ -1,61 +1,75 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Simple CRUD API with Laravel 12 and Sanctum
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+This project is a simple RESTful API built with Laravel 12. It demonstrates user authentication, CRUD operations for posts, and authorization using policies and middleware.
 
-## About Laravel
+---
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Features
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+- User registration, login, and logout with Laravel Sanctum
+- Create, read, update, and delete posts
+- Protect routes using authentication middleware
+- Authorize actions using policies (only post owners can update or delete their posts)
+- Organized routes with versioning (`/v1` prefix)
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+---
 
-## Learning Laravel
+## API Endpoints
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+### Authentication
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+| Method | Endpoint       | Description                  | Auth Required |
+|--------|---------------|------------------------------|---------------|
+| POST   | `/v1/register` | Register a new user          | No            |
+| POST   | `/v1/login`    | Login and receive token      | No            |
+| POST   | `/v1/logout`   | Logout current user          | Yes           |
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### User
 
-## Laravel Sponsors
+| Method | Endpoint       | Description                | Auth Required |
+|--------|---------------|----------------------------|---------------|
+| GET    | `/v1/user`     | Get authenticated user info | Yes           |
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+### Posts
 
-### Premium Partners
+| Method | Endpoint               | Description               | Auth Required |
+|--------|------------------------|---------------------------|---------------|
+| GET    | `/v1/posts`            | List all posts            | No            |
+| POST   | `/v1/posts`            | Create a new post         | Yes           |
+| GET    | `/v1/posts/{post}`     | Get a single post by ID   | Yes           |
+| PUT    | `/v1/posts/{post}/edit`| Update a post (owner only)| Yes           |
+| DELETE | `/v1/posts/{post}/delete` | Delete a post (owner only)| Yes          |
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+---
 
-## Contributing
+## Authorization
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+- Only authenticated users can create, update, or delete posts.
+- Policies ensure that users can only update or delete their own posts.
+- Unauthorized attempts return a JSON error message.
 
-## Code of Conduct
+---
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+## Lessons Learned
 
-## Security Vulnerabilities
+While building this API, the following concepts were applied and understood:
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+1. **Route Grouping and Versioning**  
+   - Using `Route::prefix` to organize and version endpoints (`/v1`).
 
-## License
+2. **Authentication with Sanctum**  
+   - Protecting routes using `auth:sanctum` middleware.  
+   - Generating, validating, and revoking tokens for user authentication.
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+3. **Form Requests and Validation**  
+   - Using `FormRequest` classes to validate input data (e.g., creating posts).
+
+4. **Policies for Authorization**  
+   - Implementing `PostPolicy` to check whether the authenticated user owns the post before allowing update or delete actions.  
+   - Returning custom error messages when authorization fails.
+
+5. **Middleware Usage**  
+   - Applying middleware to secure routes and integrate authorization checks like `can:update,post`.
+
+---
+
